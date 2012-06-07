@@ -1,48 +1,130 @@
-What packages are needed ?
-At least:
- - fake-uname (optionnal but usefull)
- - kernelsource (exploded in a directory, linked from /usr/src/ ; or installed)
- - kernelive (not installed)
- - squashfs-tools
- - curlftpfs, sshfs(-fuse)
-What needs to be installed to compile:
- - spkg or pkgtools or spkg-pkgtools
- - coreutils, sed, grep, tar, gzip, bzip2, xz, findutils
- - glibc, sysfsutils, gcc, glib2, automake, autoconf, make
- - wget
- - fuse, util-linux-ng
- - squashfs-tools
- - grub2
- - cdrtools
-How to build a Live CD (here SalixLive)?
-Steps :
-1/ Create kernelive package.
-  1/ Get the kernelsource of the kernel you want to build.
-  2/ Use a tiny script fake-uname (available on this site as a package) to fake the kernel version in use.
-  3/ Create a config-KVER.live for the corresponding KVER kernel version. You could have a look to the patch file to know the diff from slackware kernel in order to apply to yours.
-  4/ use the kernelive SLKBUILD file with slkbuild.
-2/ Install the squashfs-tools package.
-3/ Create the PKGS directory and download there all packages that you want to put on the Live using getpkgs.sh script.
-4/ Create a file per module you need which contains one package name per line.
-5/ Create a file MODULES_INFO with the reference modules:
-  module=kernel,packages-kernel
-  module=base,packages-base
-  module=live,packages-live
-Where packages-* reference each file per module created in 4/. You can organize it anyway you want.
-You must add at least the following packages:
-  - kernelive
-  - aaa_base, devs, sysvinit, ...
-  - ash
-  - all GNU basic packages
-6/ copy standard kernel packages in std-kernel directory (huge, module & firmware).
-7/ update the libraries in ./libs/ARCH with GNU ones if you want fresher ones. They will be use by initrd.
-8/ run build-salixlive.sh (and wait) to output you an ISO file ready to burn or to be put on an USB key (not with Unetbootin, but with install-on-USB).
+                                           ┌──────────────┐
+                                           │ SaLT scripts │
+                                           └──────────────┘
 
-Good luck ^_^
 
-P.S. liveenv directory is used to create a special package for special modifications for the live environment.
+I/ What are “SaLT” and “SaLT scripts”?
+┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+  → SaLT stands for Salix Live Tools. With these tool set, you can create an initrd for booting
+    live media. SaLT bundle a basic tree structure for booting but it aims at creating an initrd
+    and so is not a complete solution for creating a Live CD.
+  → SaLT scripts are a collection of scripts that deal with SaLT, can build live modules and that
+    can create a ready-to-burn Live ISO.
 
---
-Akuna <akuna@salixos.org>
-JRD <jrd@salixos.org>
-Shador <shador@salixos.org>
+  Both these tools are free (GPL v3+) and maintained by the same team:
+    ▸ JRD <jrd@salixos.org>
+    ▸ Shador <shador@salixos.org>
+    ▸ Akuna <akuna@salixos.org>
+
+
+II/ Minimum requirements
+┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+  Some software must be installed in the host system. I will list them as named in Slackware/Salix.
+  Required:
+   - spkg or pkgtools
+   - coreutils, sed, grep, tar, gzip, bzip2, xz, findutils
+   - glibc, sysfsutils, gcc, glib2, automake, autoconf, make
+   - wget
+   - fuse, util-linux-ng
+   - squashfs-tools
+   - grub2
+   - syslinux
+   - imagemagick, xcf2png
+   - cdrtools
+  Optional:
+   - fake-uname (could be usefull if your running kernel is different that the one you bundle)
+  Some software need to be available as packages for the target Live system. These are:
+   - kernelsource (exploded in a directory, linked from /usr/src/ ; or installed)
+   - kernelive
+   - curlftpfs, sshfs(-fuse)
+
+
+III/ Create an ISO
+┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+  For creating an ISO, you only need few things actually.
+  You will need a kernelive package, a list of packages (organized by live modules),
+  some custom packages (like an installer, the persistence wizard, …), the standard
+  kernel packages (image, headers, …), a list of liveenv modules, and a PNG image for
+  the bootloader background.
+
+  1/ kernelive
+  ------------
+    Kernelive is a side project available here:
+        https://salix.svn.sourceforge.net/svnroot/salix/kernelive/trunk
+    ◆ Get the kernelsource of the kernel you want to build.
+    ◆ Use a tiny script fake-uname (available on this site as a package) to fake the kernel
+      version in use.
+    ◆ Create a config-KVER.live for the corresponding KVER kernel version.
+      You could have a look to the patch file to know the diff from slackware kernel in order to
+      apply to yours.
+    ◆ use the kernelive SLKBUILD file with slkbuild.
+
+  2/ packages
+  -----------
+    You must now decide which packages you want to include in your ISO.
+    You must also arganize your packages in collections (modules).
+    Be carefull to put any package that depends directly on the kernel version in a separate
+    module, together with the kernelive package.
+    The last module will contains a special package, named liveenv, which deals with configuring
+    a live system.
+
+    ◆ Create a file packages-foobar for each foobar module. This file will list each package on
+      one line.
+    ◆ Create a file MODULES_INFO with the referenced modules:
+      ┊ module=kernel,packages-kernel
+      ┊ module=base,packages-base
+      ┊ module=live,packages-live
+
+    You must now define which liveenv module you want to provide.
+    You can list them in liveenv/modules directory. At least all 0? modules should be considered.
+
+    ◆ Create a file MODULES.liveenv with the referenced liveenv modules:
+      ┊ etc
+      ┊ root-password
+      ┊ hostname
+
+    ◆ Copy the standard kernel packages in std-kernel directory:
+      - kernel-huge
+      - kernel-modules
+      - kernel-firmware
+      - kernel-headers
+
+    ◆ Copy your special packages in local directory:
+      - kernelive
+      - salix-live-installer
+      - persistence-wizard
+
+    Get all remaining packages by issueing:
+      $ ./getpkgs.sh ARCH VERSION
+    where ARCH could be 32 or 64 and VERSION is the Slackware version.
+
+  3/ configuration
+  ----------------
+    You need to indicate some configuration before continuing.
+    This is done in a file named “config”. Example:
+      ┊ # vim: set syn=sh:
+      ┊ if [ -z "$DISTRO" ]; then
+      ┊   export DISTRO=salix
+      ┊   export VER=xfce-13.37-32
+      ┊   export RLZ=test
+      ┊   export RLZ=
+      ┊   export FUFSVER=0.4.2
+      ┊   export FUFSURL=http://funionfs.apiou.org/file/funionfs-$FUFSVER.tar.gz
+      ┊   export ISO_NAME=${DISTRO}live-$VER${RLZ:+-$RLZ}.iso
+      ┊   export KERNELPKGNAME=kernelive
+      ┊   export COMP=xz # could be xz, lzm, lzo, gz.
+      ┊ fi
+
+    You will also need a background image for the bootloader.
+    The image needs to be named “salix.xcf”, in 640×480, in RGB Color.
+
+  
+  ◆ After that, you just need to run:
+      # ./build-iso.sh
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ▸ Akuna <akuna@salixos.org>
+  ▸ JRD <jrd@salixos.org>
+  ▸ Shador <shador@salixos.org>
+
