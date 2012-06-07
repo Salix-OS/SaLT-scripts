@@ -1,0 +1,48 @@
+What packages are needed ?
+At least:
+ - fake-uname (optionnal but usefull)
+ - kernelsource (exploded in a directory, linked from /usr/src/ ; or installed)
+ - kernelive (not installed)
+ - squashfs-tools
+ - curlftpfs, sshfs(-fuse)
+What needs to be installed to compile:
+ - spkg or pkgtools or spkg-pkgtools
+ - coreutils, sed, grep, tar, gzip, bzip2, xz, findutils
+ - glibc, sysfsutils, gcc, glib2, automake, autoconf, make
+ - wget
+ - fuse, util-linux-ng
+ - squashfs-tools
+ - grub2
+ - cdrtools
+How to build a Live CD (here SalixLive)?
+Steps :
+1/ Create kernelive package.
+  1/ Get the kernelsource of the kernel you want to build.
+  2/ Use a tiny script fake-uname (available on this site as a package) to fake the kernel version in use.
+  3/ Create a config-KVER.live for the corresponding KVER kernel version. You could have a look to the patch file to know the diff from slackware kernel in order to apply to yours.
+  4/ use the kernelive SLKBUILD file with slkbuild.
+2/ Install the squashfs-tools package.
+3/ Create the PKGS directory and download there all packages that you want to put on the Live using getpkgs.sh script.
+4/ Create a file per module you need which contains one package name per line.
+5/ Create a file MODULES_INFO with the reference modules:
+  module=kernel,packages-kernel
+  module=base,packages-base
+  module=live,packages-live
+Where packages-* reference each file per module created in 4/. You can organize it anyway you want.
+You must add at least the following packages:
+  - kernelive
+  - aaa_base, devs, sysvinit, ...
+  - ash
+  - all GNU basic packages
+6/ copy standard kernel packages in std-kernel directory (huge, module & firmware).
+7/ update the libraries in ./libs/ARCH with GNU ones if you want fresher ones. They will be use by initrd.
+8/ run build-salixlive.sh (and wait) to output you an ISO file ready to burn or to be put on an USB key (not with Unetbootin, but with install-on-USB).
+
+Good luck ^_^
+
+P.S. liveenv directory is used to create a special package for special modifications for the live environment.
+
+--
+Akuna <akuna@salixos.org>
+JRD <jrd@salixos.org>
+Shador <shador@salixos.org>

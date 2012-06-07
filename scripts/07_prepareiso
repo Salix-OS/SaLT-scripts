@@ -1,0 +1,35 @@
+#!/bin/sh
+# vim: set syn=sh et ai sw=2 st=2 ts=2 tw=0:
+# Maintainer: JRD <jrd@salixos.org>
+# Contributors: Shador <shador@salixos.org>, Akuna <akuna@salixos.org>
+# Licence: GPL v3+
+#
+cd $(dirname "$0")
+[ $(basename $(pwd)) = scripts ] && cd ..
+
+. scripts/00_common
+echo3 "Creating the final structure..."
+cd "$startdir"/src
+cp -r "$startdir"/salt/ .
+mkdir -p salt/overlay/${DISTRO}live/modules salt/overlay/packages/std-kernel
+# add the standard kernel
+echo3 "Adding the standard kernel too"
+cp $startdir/std-kernel/kernel-* salt/overlay/packages/std-kernel/
+# add the packages lists
+echo3 "Adding packages lists"
+cp $startdir/packages-* salt/overlay/packages/
+# configure salt
+FILE=${DISTRO}-$VER${RLZ:+-$RLZ}.live
+CONTENT=$(/bin/echo -n "${FILE}" | md5sum | cut -d' ' -f1)
+cat <<EOF > salt/config
+#!/bin/sh
+LIVE_NAME="${DISTRO} Live v.${VER}"
+# File search at the root of CD/USB disk/partition
+IDENT_FILE=${FILE}
+# Content to valid the disk/partition.
+IDENT_CONTENT=${CONTENT}
+# Directory that contains all data
+ROOT_DIR=${DISTRO}live
+EOF
+unset FILE CONTENT
+cd -

@@ -1,0 +1,144 @@
+#!/bin/sh
+# vim: set syn=sh et ai sw=2 st=2 ts=2 tw=0:
+# Maintainer: JRD <jrd@salixos.org>
+# Contributors: Shador <shador@salixos.org>, Akuna <akuna@salixos.org>
+# Licence: GPL v3+
+#
+cd $(dirname "$0")
+[ $(basename $(pwd)) = scripts ] && cd ..
+
+. scripts/00_common
+. scripts/03_readmodules
+. scripts/05_preparesources
+if [ -z "$kmodule" ]; then
+  kmodule=''
+  lastmodule=''
+  while read m; do
+    list="$(echo "$m"|cut -d\| -f3-)"
+    m=$(echo "$m"|cut -d\| -f1-2|sed 's/|/-/')
+    lastmodule=$m
+    for p in $list; do
+      if [ $p = $KERNELPKGNAME ]; then
+        # module where the kernel live is
+        kmodule=$m
+      fi
+    done
+  done < "$modules"
+  export kmodule
+  export lastmodule
+fi
+
+MODULE="$1"
+[ -z "$MODULE" ] && MODULE=all
+
+funionfsopts="$startdir/src/empty=ro" # the first readonly directory (will always be empty)
+nmodule=0
+inittabfile=$(find $startdir/PKGS -name "sysvinit-scripts-*"|grep "sysvinit-scripts-[^-]\+-[^-]\+-[^-]\+.t[gblx]z"|head -n 1)
+cmdinstall='spkg -i'
+which spkg >/dev/null 2>&1 || cmdinstall='installpkg'
+cd "$startdir"/src
+while read m; do
+  list="$(echo "$m"|cut -d\| -f3-)"
+  m=$(echo "$m"|cut -d\| -f1-2|sed 's/|/-/')
+  if [ $m = $MODULE -o $MODULE = all ]; then
+    if [ -e $m ]; then
+      rm -rf $m
+    fi
+    echo3 "Installing packages for $m..."
+    mkdir $m
+    ROOT="$startdir"/src/module # for use by spkg or installpkg
+    export ROOT
+    echo "funionfsopts=$funionfsopts"
+    "$startdir"/funionfs -o "dirs=$funionfsopts:$startdir/src/$m" none "$ROOT"
+    funionfsopts="$funionfsopts:$startdir/src/$m=ro"
+    nb=$(echo "$list" | wc -w)
+    i=0
+    d0=$(date +%s)
+    for p in $list; do
+      i=$(( $i + 1 ))
+      [ "$PIPEOUT" != "1" ] && clear
+      echo "⋅⋅⋅---=== Installing packages for $m ===---⋅⋅⋅"
+      echo ''
+      echo -n 'Progression : ['
+      perct=$(($i * 100 / $nb))
+      nbSharp=$(($i * 50 / $nb))
+      nbSpace=$((50 - $nbSharp))
+      for j in $(seq $nbSharp); do echo -n '#'; done
+      for j in $(seq $nbSpace); do echo -n '_'; done
+      echo "] $i / $nb ($perct%)"
+      offset=$(($(date +%s) - $d0))
+      timeremain=$((($nb - $i) * $offset / $i))
+      echo 'Remaining time (estimated) :' $(date -d "1970-01-01 UTC +$timeremain seconds" +%M:%S)
+      echo ''
+      file=$(find -L "$startdir"/PKGS -name "$p-*"|grep "$p-[^-]\+-[^-]\+-[^-]\+.t[gblx]z"|head -n 1)
+      $cmdinstall "$file"
+    done
+    # dotnew
+    if [ -e "$ROOT"/etc ]; then
+      find "$ROOT"/etc -name '*.new'|xargs -i@ bash -c '(N="$1"; F="$(dirname $N)/$(basename $N .new)"; if [ -e $F ]; then rm $N; else mv $N $F; fi)' -- @
+    fi
+    # inittab
+    if [ -e "$inittabfile" ]; then
+      # first module is consider to be 'core' and only boot in console runlevel 3
+      if [ $nmodule -eq 0 ]; then
+        tar -xOf "$inittabfile" etc/inittab.new | sed 's/^id:.:initdefault:/id:3:initdefault:/' > "$ROOT"/etc/inittab
+      elif [ $nmodule -eq 1 ]; then
+        sed -i 's/^id:.:initdefault:/id:4:initdefault:/' "$ROOT"/etc/inittab
+      fi
+    fi
+    if [ $kmodule = $m ]; then
+      (
+        cd "$ROOT"
+        mkdir -p usr/src/$KERNELPKGNAME usr/sbin
+        cp usr/src/linux-*/.config usr/src/linux-*/Module.symvers usr/src/$KERNELPKGNAME/
+        cat <<EOF > usr/sbin/init-live-kernel-compilation
+#!/bin/sh
+cp /usr/src/$KERNELPKGNAME/.config /usr/src/$KERNELPKGNAME/Module.symvers /usr/src/linux-2.*/
+EOF
+        chmod ug+x usr/sbin/init-live-kernel-compilation
+      )
+    fi
+    # /var/log/setup
+    if [ $lastmodule = $m ]; then
+      (
+        cd "$ROOT"
+        # /dev/null could be needed and will not be usable, so the trick is to delete it, and then delete the "deletion".
+        rm ./dev/null
+        for s in 04.mkfontdir 05.fontconfig 07.update-desktop-database 07.update-mime-database 08.gtk-update-icon-cache htmlview services; do
+          if [ -x var/log/setup/setup.$s ]; then
+            echo "Running '/var/log/setup/setup.$s $ROOT'"
+            echo ""
+            ./var/log/setup/setup.$s "$ROOT"
+          fi
+        done
+        chmod a+r-x+X -R etc/gtk-2.0 etc/pango
+        echo "Running 'chroot . /usr/bin/update-gtk-immodules'"
+        chroot . /usr/bin/update-gtk-immodules
+        echo "Running 'chroot . /usr/bin/update-gdk-pixbuf-loaders'"
+        chroot . /usr/bin/update-gdk-pixbuf-loaders
+        echo "Running 'chroot . /usr/bin/update-pango-querymodules'"
+        chroot . /usr/bin/update-pango-querymodules
+        if find usr/share/icons 2> /dev/null | grep -q icon-theme.cache ; then
+          for theme_dir in usr/share/icons/* ; do
+            if [ -d "${theme_dir}"/icon-theme.cache ]; then
+              chroot . usr/bin/gtk-update-icon-cache -t -f "${theme_dir}" >/dev/null 2>&1
+            fi
+          done
+        fi
+      )
+    fi
+    umount "$ROOT"
+    if [ $lastmodule = $m ]; then
+      # delete the deletion of /dev/null
+      rm -rf $m/dev
+    fi
+    # remove any fakely deleted files in RO branches, default suffix is _DELETED~
+    find "$startdir/src/$m" -name '*_DELETED~' -prune -exec rm -rf '{}' \;
+  else
+    if [ -e $m ]; then
+      funionfsopts="$funionfsopts:$startdir/src/$m=ro"
+    fi
+  fi
+  nmodule=$(($nmodule + 1))
+done < "$modules"
+cd "$startdir"

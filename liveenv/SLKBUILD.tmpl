@@ -1,0 +1,25 @@
+# vim: syn=sh:
+#Packager: JRD <jrd@salixos.org>
+
+pkgname=liveenv
+pkgver=
+pkgrel=1salt
+options=('noextract' 'noautodotnew' 'nosrcpack')
+
+doinst() {
+}
+
+slackdesc=\
+(
+#|-----handy-ruler------------------------------------------------------|
+"$pkgname (Mofications for the Live environment)"
+"See /usr/doc/$pkgname-$pkgver/MODIFICATIONS"
+"for a list of all modifications."
+)
+
+
+build() {
+  cp -ar $startdir/root/* $PKG/
+  mkdir -p $PKG/usr/doc/$pkgname-$pkgver
+  cp $startdir/MODIFICATIONS $PKG/usr/doc/$pkgname-$pkgver/
+}
