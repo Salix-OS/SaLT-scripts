@@ -1,6 +1,9 @@
 #!/bin/sh
+startdir="$1"
+[ -n "$startdir" ] && [ -d "$startdir" ] || exit 1
 cd "$(dirname "$0")"
-HDIR="$(readlink -f "$PWD"/../..)"
+HDIR="$startdir/liveenv"
+PKGSDIR="$startdir/PKGS"
 RDIR="$HDIR"/root
 doinst="$HDIR"/doinst
 modtxt="$HDIR"/MODIFICATIONS
@@ -13,7 +16,7 @@ user-settings-mate
 
 EOF
 
-USERSETTINGS_MATE="$(readlink -f "$(ls -1 "$HDIR"/../PKGS/user-settings-mate-[0-9]*.txz 2>/dev/null)")"
+USERSETTINGS_MATE="$(readlink -f "$(ls -1 "$PKGSDIR"/user-settings-mate-[0-9]*.txz 2>/dev/null)")"
 if [ -n "$USERSETTINGS_MATE" ]; then
   tar -C "$RDIR" -xf "$USERSETTINGS_MATE" etc/skel
 else

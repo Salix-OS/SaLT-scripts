@@ -7,8 +7,8 @@
 cd "$(dirname "$0")"
 if [ "$(basename "$(pwd)")" = "liveenv" ]; then
   cd ..
-  . config
-  startdir="$(pwd)"
+  . $PWD/config
+  startdir="$PWD"
   cd liveenv
   VER=$(echo $VER|cut -d- -f2)
 else
@@ -64,9 +64,9 @@ rm -rf root doinst MODIFICATIONS
 mkdir root
 touch doinst MODIFICATIONS
 for m in $MODULES; do
-  echo "Adding $m"
+  echo "* Adding $m"
   # fill root directory and append to doinst and MODIFICATIONS files
-  $m/add.sh
+  $m/add.sh "$startdir"
 done
 sed "s/^pkgver=/\0$VER/; /^doinst/r doinst" SLKBUILD.tmpl > SLKBUILD
 slkbuild -X

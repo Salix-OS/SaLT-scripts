@@ -1,6 +1,9 @@
 #!/bin/sh
+startdir="$1"
+[ -n "$startdir" ] && [ -d "$startdir" ] || exit 1
 cd "$(dirname "$0")"
-HDIR="$(readlink -f "$PWD"/../..)"
+HDIR="$startdir/liveenv"
+PKGSDIR="$startdir/PKGS"
 RDIR="$HDIR"/root
 doinst="$HDIR"/doinst
 modtxt="$HDIR"/MODIFICATIONS

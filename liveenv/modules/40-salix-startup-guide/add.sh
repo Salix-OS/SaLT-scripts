@@ -1,6 +1,10 @@
 #!/bin/sh
+startdir="$1"
+[ -n "$startdir" ] && [ -d "$startdir" ] || exit 1
 cd "$(dirname "$0")"
-HDIR="$(readlink -f "$PWD"/../..)"
+HDIR="$startdir/liveenv"
+PKGSDIR="$startdir/PKGS"
+LOCALDIR="$startdir/local"
 RDIR="$HDIR"/root
 doinst="$HDIR"/doinst
 modtxt="$HDIR"/MODIFICATIONS
@@ -13,7 +17,7 @@ salix-startup-guide
 
 EOF
 
-SALIXSTARTUPGUIDE="$(readlink -f "$(ls -1 "$HDIR"/../PKGS/salix-startup-guide-*.txz 2>/dev/null)")"
+SALIXSTARTUPGUIDE="$(readlink -f "$(ls -1 "$PKGSDIR"/salix-startup-guide-*.txz "$LOCALDIR"/salix-startup-guide-*.txz 2>/dev/null | head -n 1)")"
 if [ -n "$SALIXSTARTUPGUIDE" ]; then
   tar xf "$SALIXSTARTUPGUIDE" usr/share/applications
   mkdir -p "$RDIR"/home/one/Desktop

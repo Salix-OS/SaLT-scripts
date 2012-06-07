@@ -1,6 +1,10 @@
 #!/bin/sh
+startdir="$1"
+[ -n "$startdir" ] && [ -d "$startdir" ] || exit 1
 cd "$(dirname "$0")"
-HDIR="$(readlink -f "$PWD"/../..)"
+HDIR="$startdir/liveenv"
+PKGSDIR="$startdir/PKGS"
+LOCALDIR="$startdir/local"
 RDIR="$HDIR"/root
 doinst="$HDIR"/doinst
 modtxt="$HDIR"/MODIFICATIONS
@@ -13,7 +17,7 @@ persistence-wizard
 
 EOF
 
-PERSISTENCEWIZARD="$(readlink -f "$(ls -1 "$HDIR"/../PKGS/persistence-wizard-*.txz 2>/dev/null)")"
+PERSISTENCEWIZARD="$(readlink -f "$(ls -1 "$PKGSDIR"/persistence-wizard-*.txz "$LOCALDIR"/persistence-wizard-*.txz 2>/dev/null | head -n 1)")"
 if [ -n "$PERSISTENCEWIZARD" ]; then
   tar xf "$PERSISTENCEWIZARD" usr/share/applications
   mkdir -p "$RDIR"/home/one/Desktop

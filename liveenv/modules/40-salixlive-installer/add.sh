@@ -1,6 +1,10 @@
 #!/bin/sh
+startdir="$1"
+[ -n "$startdir" ] && [ -d "$startdir" ] || exit 1
 cd "$(dirname "$0")"
-HDIR="$(readlink -f "$PWD"/../..)"
+HDIR="$startdir/liveenv"
+PKGSDIR="$startdir/PKGS"
+LOCALDIR="$startdir/local"
 RDIR="$HDIR"/root
 doinst="$HDIR"/doinst
 modtxt="$HDIR"/MODIFICATIONS
@@ -13,7 +17,7 @@ salixlive-installer
 
 EOF
 
-SALIXLIVEINSTALLER="$(readlink -f "$(ls -1 "$HDIR"/../PKGS/salix-live-installer-*.txz 2>/dev/null)")"
+SALIXLIVEINSTALLER="$(readlink -f "$(ls -1 "$PKGSDIR"/salix-live-installer-*.txz "$LOCALDIR"/salix-live-installer-*.txz 2>/dev/null | head -n 1)")"
 if [ -n "$SALIXLIVEINSTALLER" ]; then
   tar xf "$SALIXLIVEINSTALLER" usr/share/applications
   mkdir -p "$RDIR"/home/one/Desktop

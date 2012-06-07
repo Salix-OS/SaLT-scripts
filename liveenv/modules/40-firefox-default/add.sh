@@ -1,6 +1,9 @@
 #!/bin/sh
+startdir="$1"
+[ -n "$startdir" ] && [ -d "$startdir" ] || exit 1
 cd "$(dirname "$0")"
-HDIR="$(readlink -f "$PWD"/../..)"
+HDIR="$startdir/liveenv"
+PKGSDIR="$startdir/PKGS"
 RDIR="$HDIR"/root
 doinst="$HDIR"/doinst
 modtxt="$HDIR"/MODIFICATIONS
@@ -13,7 +16,7 @@ firefox-default
 
 EOF
 
-FIREFOXVER=$(ls -1 "$HDIR"/../PKGS/mozilla-firefox-*-*-*.txz 2>/dev/null | head -n 1 | sed 's/.*-.*-\([^-]*\)-[^-]*-[^-]*\.txz/\1/')
+FIREFOXVER=$(ls -1 "$PKGSDIR"/mozilla-firefox-*-*-*.txz 2>/dev/null | head -n 1 | sed 's/.*-.*-\([^-]*\)-[^-]*-[^-]*\.txz/\1/')
 if [ -n "$FIREFOXVER" ]; then
   mkdir -p "$RDIR"/home/one/.gconf/desktop/gnome/url-handlers/{chrome,ftp,http,https}
   touch "$RDIR"/home/one/.gconf/%gconf.xml

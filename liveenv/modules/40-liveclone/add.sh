@@ -1,6 +1,10 @@
 #!/bin/sh
+startdir="$1"
+[ -n "$startdir" ] && [ -d "$startdir" ] || exit 1
 cd "$(dirname "$0")"
-HDIR="$(readlink -f "$PWD"/../..)"
+HDIR="$startdir/liveenv"
+PKGSDIR="$startdir/PKGS"
+LOCALDIR="$startdir/local"
 RDIR="$HDIR"/root
 doinst="$HDIR"/doinst
 modtxt="$HDIR"/MODIFICATIONS
@@ -13,7 +17,7 @@ liveclone
 
 EOF
 
-LIVECLONE="$(readlink -f "$(ls -1 "$HDIR"/../PKGS/liveclone-*.txz 2>/dev/null)")"
+LIVECLONE="$(readlink -f "$(ls -1 "$PKGSDIR"/liveclone-*.txz "$LOCALDIR"/liveclone-*.txz 2>/dev/null | head -n 1)")"
 if [ -n "$LIVECLONE" ]; then
   tar xf "$LIVECLONE" usr/share/applications
   mkdir -p "$RDIR"/home/one/Desktop

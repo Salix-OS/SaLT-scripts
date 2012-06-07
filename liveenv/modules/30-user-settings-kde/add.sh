@@ -1,6 +1,9 @@
 #!/bin/sh
+startdir="$1"
+[ -n "$startdir" ] && [ -d "$startdir" ] || exit 1
 cd "$(dirname "$0")"
-HDIR="$(readlink -f "$PWD"/../..)"
+HDIR="$startdir/liveenv"
+PKGSDIR="$startdir/PKGS"
 RDIR="$HDIR"/root
 doinst="$HDIR"/doinst
 modtxt="$HDIR"/MODIFICATIONS
@@ -13,7 +16,7 @@ user-settings-kde
 
 EOF
 
-USERSETTINGS_KDE="$(readlink -f "$(ls -1 "$HDIR"/../PKGS/user-settings-kde-[0-9]*.txz 2>/dev/null)")"
+USERSETTINGS_KDE="$(readlink -f "$(ls -1 "$PKGSDIR"/user-settings-kde-[0-9]*.txz 2>/dev/null)")"
 if [ -n "$USERSETTINGS_KDE" ]; then
   tar -C "$RDIR" -xf "$USERSETTINGS_KDE" etc/skel
 else

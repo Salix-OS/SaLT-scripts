@@ -1,6 +1,9 @@
 #!/bin/sh
+startdir="$1"
+[ -n "$startdir" ] && [ -d "$startdir" ] || exit 1
 cd "$(dirname "$0")"
-HDIR="$(readlink -f "$PWD"/../..)"
+HDIR="$startdir/liveenv"
+PKGSDIR="$startdir/PKGS"
 RDIR="$HDIR"/root
 doinst="$HDIR"/doinst
 modtxt="$HDIR"/MODIFICATIONS
@@ -22,4 +25,4 @@ chmod go-r etc/ssh/*_key
 EOF
 
 mkdir -p "$RDIR"/etc/ssh
-ssh-keygen -t rsa -N '' -C 'root@localhost' -f "$RDIR"/etc/ssh/ssh_host_rsa_key
+ssh-keygen -q -t rsa -N '' -C 'root@localhost' -f "$RDIR"/etc/ssh/ssh_host_rsa_key

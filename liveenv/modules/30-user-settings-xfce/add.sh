@@ -1,6 +1,9 @@
 #!/bin/sh
+startdir="$1"
+[ -n "$startdir" ] && [ -d "$startdir" ] || exit 1
 cd "$(dirname "$0")"
-HDIR="$(readlink -f "$PWD"/../..)"
+HDIR="$startdir/liveenv"
+PKGSDIR="$startdir/PKGS"
 RDIR="$HDIR"/root
 doinst="$HDIR"/doinst
 modtxt="$HDIR"/MODIFICATIONS
@@ -13,7 +16,7 @@ user-settings-xfce
 
 EOF
 
-USERSETTINGS_XFCE="$(readlink -f "$(ls -1 "$HDIR"/../PKGS/user-settings-xfce-[0-9]*.txz 2>/dev/null)")"
+USERSETTINGS_XFCE="$(readlink -f "$(ls -1 "$PKGSDIR"/user-settings-xfce-[0-9]*.txz 2>/dev/null)")"
 if [ -n "$USERSETTINGS_XFCE" ]; then
   tar -C "$RDIR" -xf "$USERSETTINGS_XFCE" etc/skel
 else
