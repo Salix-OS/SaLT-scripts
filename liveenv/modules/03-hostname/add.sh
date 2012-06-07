@@ -1,7 +1,6 @@
 #!/bin/sh
 cd "$(dirname "$0")"
 HDIR="$(readlink -f "$PWD"/../..)"
-echo "$HDIR"
 RDIR="$HDIR"/root
 doinst="$HDIR"/doinst
 modtxt="$HDIR"/MODIFICATIONS
@@ -9,7 +8,7 @@ modtxt="$HDIR"/MODIFICATIONS
 cat <<EOF >> "$modtxt"
 hostname
 --------
-"- hostname to salixlive.salixos.org (resolved to localhost)"
+- hostname to salixlive.salixos.org (resolved to localhost)
 
 
 EOF

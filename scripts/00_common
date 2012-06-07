@@ -5,10 +5,10 @@
 # Licence: GPL v3+
 #
 if [ -z "$startdir" ]; then
-  cd $(dirname "$0")
-  [ $(basename $(pwd)) = scripts ] && cd ..
+  cd "$(dirname "$0")"
+  [ "$(basename "$(pwd)")" = "scripts" ] && cd ..
 
-  startdir=$(pwd)
+  startdir="$(pwd)"
   export startdir
   
   if [ $(id -ru) -ne 0 ]; then
@@ -28,7 +28,7 @@ if [ -z "$startdir" ]; then
   export PIPEOUT
   export PIPEERR
   
-  if [ ! -e $startdir/MODULES_INFOS ]; then
+  if [ ! -e "$startdir"/MODULES_INFOS ]; then
     cat << EOF
 ERROR: $startdir/MODULES_INFOS not found
 This file must describe the modules to build for the live CD like this:
@@ -51,7 +51,7 @@ EOF
   
   quit() {
     echo "$1"
-    [ -n "$modules" ] && rm -f $modules
+    [ -n "$modules" ] && rm -f "$modules"
   }
 
   dir2squashfs() {

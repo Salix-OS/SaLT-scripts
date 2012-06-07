@@ -4,8 +4,8 @@
 # Contributors: Shador <shador@salixos.org>, Akuna <akuna@salixos.org>
 # Licence: GPL v3+
 #
-cd $(dirname "$0")
-[ $(basename $(pwd)) = scripts ] && cd ..
+cd "$(dirname "$0")"
+[ "$(basename "$(pwd)")" = "scripts" ] && cd ..
 
 . scripts/00_common
 . scripts/03_readmodules
@@ -33,7 +33,7 @@ MODULE="$1"
 
 funionfsopts="$startdir/src/empty=ro" # the first readonly directory (will always be empty)
 nmodule=0
-inittabfile=$(find $startdir/PKGS -name "sysvinit-scripts-*"|grep "sysvinit-scripts-[^-]\+-[^-]\+-[^-]\+.t[gblx]z"|head -n 1)
+inittabfile=$(find "$startdir"/PKGS -name "sysvinit-scripts-*"|grep "sysvinit-scripts-[^-]\+-[^-]\+-[^-]\+.t[gblx]z"|head -n 1)
 cmdinstall='spkg -i'
 which spkg >/dev/null 2>&1 || cmdinstall='installpkg'
 cd "$startdir"/src

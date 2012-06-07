@@ -5,6 +5,16 @@
 # Licence: GPL v3+
 #
 cd "$(dirname "$0")"
+if [ "$(basename "$(pwd)")" = "liveenv" ]; then
+  cd ..
+  . config
+  startdir="$(pwd)"
+  cd liveenv
+  VER=$(echo $VER|cut -d- -f2)
+else
+  exit 1
+fi
+
 usage() {
   echo "$0 MODULE1 MODULE2 ..."
   echo "  Will create a liveenv package and will place it in PKGS/"
@@ -34,6 +44,7 @@ get_full_path() {
     echo modules/[0-9][0-9]-$m
   done
 }
+check_root
 MODULES=''
 while [ -n "$1" ] && [ "$1" != "--" ]; do
   M="$1"
@@ -49,19 +60,15 @@ done
 MODULES="$(get_all_modules "$MODULES")"
 # get full path and sort
 MODULES="$(ls -1d $(get_full_path "$MODULES")|sort -u)"
-echo MODULES=$MODULES
-exit 0
 rm -rf root doinst MODIFICATIONS
 mkdir root
 touch doinst MODIFICATIONS
 for m in $MODULES; do
-  echo "Adding module $m"
+  echo "Adding $m"
   # fill root directory and append to doinst and MODIFICATIONS files
   $m/add.sh
 done
-. ../config
-VER=$(echo $VER|cut -d- -f2)
-sed "s/^pkgver=/\0$VER/; /^doinst/r doinst;" SLKBUILD.tmpl > SLKBUILD
+sed "s/^pkgver=/\0$VER/; /^doinst/r doinst" SLKBUILD.tmpl > SLKBUILD
 slkbuild -X
-rm SLKBUILD doinst MODIFICATIONS
-mv liveenv-*-*-*.txz ../PKGS/
+rm -rf SLKBUILD doinst MODIFICATIONS root *.md5 *.log
+mv liveenv-*-*-*.txz "$startdir"/PKGS/

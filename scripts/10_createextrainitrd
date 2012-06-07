@@ -4,8 +4,8 @@
 # Contributors: Shador <shador@salixos.org>, Akuna <akuna@salixos.org>
 # Licence: GPL v3+
 #
-cd $(dirname "$0")
-[ $(basename $(pwd)) = scripts ] && cd ..
+cd "$(dirname "$0")"
+[ "$(basename "$(pwd)")" = "scripts" ] && cd ..
 
 . scripts/00_common
 echo3 "Creating extra initrd..."

@@ -4,8 +4,8 @@
 # Contributors: Shador <shador@salixos.org>, Akuna <akuna@salixos.org>
 # Licence: GPL v3+
 #
-cd $(dirname "$0")
-[ $(basename $(pwd)) = scripts ] && cd ..
+cd "$(dirname "$0")"
+[ "$(basename "$(pwd)")" = "scripts" ] && cd ..
 
 . scripts/00_common
 echo3 "Creating the final structure..."
@@ -14,10 +14,10 @@ cp -r "$startdir"/salt/ .
 mkdir -p salt/overlay/${DISTRO}live/modules salt/overlay/packages/std-kernel
 # add the standard kernel
 echo3 "Adding the standard kernel too"
-cp $startdir/std-kernel/kernel-* salt/overlay/packages/std-kernel/
+cp "$startdir"/std-kernel/kernel-* salt/overlay/packages/std-kernel/
 # add the packages lists
 echo3 "Adding packages lists"
-cp $startdir/packages-* salt/overlay/packages/
+cp "$startdir"/packages-* salt/overlay/packages/
 # configure salt
 FILE=${DISTRO}-$VER${RLZ:+-$RLZ}.live
 CONTENT=$(/bin/echo -n "${FILE}" | md5sum | cut -d' ' -f1)

@@ -4,8 +4,8 @@
 # Contributors: Shador <shador@salixos.org>, Akuna <akuna@salixos.org>
 # Licence: GPL v3+
 #
-cd $(dirname "$0")
-[ $(basename $(pwd)) = scripts ] && cd ..
+cd "$(dirname "$0")"
+[ "$(basename "$(pwd)")" = "scripts" ] && cd ..
 
 . scripts/00_common
 . scripts/03_readmodules
@@ -23,7 +23,7 @@ if [ -z "$kmodule" ]; then
         # module where the kernel live is
         kmodule=$m
       fi
-      file=$(find -L "$startdir"/PKGS -name "$p-*"|grep "$p-[^-]\+-[^-]\+-[^-]\+.t[gblx]z"|head -n 1)
+      file="$(find -L "$startdir"/PKGS -name "$p-*"|grep "$p-[^-]\+-[^-]\+-[^-]\+.t[gblx]z"|head -n 1)"
       if [ ! -e "$file" ]; then
         quit "$p, referenced by module $m, is not available in $startdir/PKGS/"
         exit 1

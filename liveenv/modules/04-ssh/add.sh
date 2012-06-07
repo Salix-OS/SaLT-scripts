@@ -1,7 +1,6 @@
 #!/bin/sh
 cd "$(dirname "$0")"
 HDIR="$(readlink -f "$PWD"/../..)"
-echo "$HDIR"
 RDIR="$HDIR"/root
 doinst="$HDIR"/doinst
 modtxt="$HDIR"/MODIFICATIONS
