@@ -8,6 +8,7 @@ import getopt
 import string
 import urllib2
 import subprocess
+import glob
 
 write = sys.stdout.write
 HILIGHTCOLOR = '\033[1;31m'
