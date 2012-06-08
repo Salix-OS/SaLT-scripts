@@ -11,7 +11,7 @@ help() {
   echo "syntax: $(basename $0) 32|64 version"
   echo "  Will check if all dependancies are met within the packages-live module."
 }
-if [ "$1" != "32" -a "$1" != "64" ]; then
+if [ "$1" != "32" ] && [ "$1" != "64" ]; then
   help
   exit 1
 fi

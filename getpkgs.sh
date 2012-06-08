@@ -12,7 +12,7 @@ help() {
   echo '  Will download the packages from the repo according to "packages-*" files.'
   echo '  If a package is already present in "local" directory, it will be used instead.'
 }
-if [ "$1" != "32" -a "$1" != "64" ]; then
+if [ "$1" != "32" ] && [ "$1" != "64" ]; then
   help
   exit 1
 fi

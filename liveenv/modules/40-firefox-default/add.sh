@@ -18,7 +18,10 @@ EOF
 
 FIREFOXVER=$(ls -1 "$PKGSDIR"/mozilla-firefox-*-*-*.txz 2>/dev/null | head -n 1 | sed 's/.*-.*-\([^-]*\)-[^-]*-[^-]*\.txz/\1/')
 if [ -n "$FIREFOXVER" ]; then
-  mkdir -p "$RDIR"/home/one/.gconf/desktop/gnome/url-handlers/{chrome,ftp,http,https}
+  mkdir -p "$RDIR"/home/one/.gconf/desktop/gnome/url-handlers/chrome
+  mkdir -p "$RDIR"/home/one/.gconf/desktop/gnome/url-handlers/ftp
+  mkdir -p "$RDIR"/home/one/.gconf/desktop/gnome/url-handlers/http
+  mkdir -p "$RDIR"/home/one/.gconf/desktop/gnome/url-handlers/https
   touch "$RDIR"/home/one/.gconf/%gconf.xml
   touch "$RDIR"/home/one/.gconf/desktop/%gconf.xml
   touch "$RDIR"/home/one/.gconf/desktop/gnome/%gconf.xml

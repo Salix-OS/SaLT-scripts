@@ -29,10 +29,11 @@ II/ Minimum requirements
    - squashfs-tools
    - grub2
    - syslinux
-   - imagemagick, xcf2png
+   - imagemagick
    - cdrtools
   Optional:
    - fake-uname (could be usefull if your running kernel is different that the one you bundle)
+   - xcf2png (if you provide a background image in XCF format)
   Some software need to be available as packages for the target Live system. These are:
    - kernelsource (exploded in a directory, linked from /usr/src/ ; or installed)
    - kernelive
@@ -104,19 +105,38 @@ III/ Create an ISO
     This is done in a file named “config”. Example:
       ┊ # vim: set syn=sh:
       ┊ if [ -z "$DISTRO" ]; then
-      ┊   export DISTRO=salix
-      ┊   export VER=xfce-13.37-32
-      ┊   export RLZ=test
-      ┊   export RLZ=
-      ┊   export FUFSVER=0.4.2
-      ┊   export FUFSURL=http://funionfs.apiou.org/file/funionfs-$FUFSVER.tar.gz
-      ┊   export ISO_NAME=${DISTRO}live-$VER${RLZ:+-$RLZ}.iso
-      ┊   export KERNELPKGNAME=kernelive
-      ┊   export COMP=xz # could be xz, lzm, lzo, gz.
+      ┊   DISTRO=salix
+      ┊   VER=xfce-13.37-32
+      ┊   RLZ=test
+      ┊   # empty for a final release for example
+      ┊   #RLZ=
+      ┊   # 
+      ┊   BGIMAGE_NAME=salix.xcf
+      ┊   # don't change this unless you sure that the newer version works the same
+      ┊   FUFSVER=0.4.2
+      ┊   FUFSURL=http://funionfs.apiou.org/file/funionfs-$FUFSVER.tar.gz
+      ┊   # this is atuo-generated for convenience but you can provide another filename
+      ┊   ISO_NAME=${DISTRO}live-$VER${RLZ:+-$RLZ}.iso
+      ┊   # the package containing the live kernel. Normally you won't need to change this
+      ┊   KERNELPKGNAME=kernelive
+      ┊   # unless you have a very good reason, use xz
+      ┊   COMP=xz # could be xz, lzm, lzo, gz.
+      ┊   
+      ┊   export DISTRO
+      ┊   export VER
+      ┊   export RLZ
+      ┊   export BGIMAGE_NAME
+      ┊   export FUFSVER
+      ┊   export FUFSURL
+      ┊   export ISO_NAME
+      ┊   export KERNELPKGNAME
+      ┊   export COMP
       ┊ fi
 
-    You will also need a background image for the bootloader.
-    The image needs to be named “salix.xcf”, in 640×480, in RGB Color.
+    You will also need a background image for the bootloader (the one you specified in the
+    config file).
+    The image could be in any format, but will be converted to PNG 640×480, 8bits RGB Color.
+    If you decide to have a Gimp XCF source file, you will also need the xcf2png tool installed.
 
   
   ◆ After that, you just need to run:

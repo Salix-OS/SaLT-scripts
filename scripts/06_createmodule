@@ -40,7 +40,7 @@ cd "$startdir"/src
 while read m; do
   list="$(echo "$m"|cut -d\| -f3-)"
   m=$(echo "$m"|cut -d\| -f1-2|sed 's/|/-/')
-  if [ $m = $MODULE -o $MODULE = all ]; then
+  if [ $m = $MODULE ] || [ $MODULE = all ]; then
     if [ -e $m ]; then
       rm -rf $m
     fi

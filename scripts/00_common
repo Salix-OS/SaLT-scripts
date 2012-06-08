@@ -20,7 +20,7 @@ if [ -z "$startdir" ]; then
   [ -t 0 ] && PIPEIN=0 || PIPEIN=1
   [ -t 1 ] && PIPEOUT=0 || PIPEOUT=1
   [ -t 2 ] && PIPEERR=0 || PIPEERR=1
-  if [ $PIPEOUT -eq 1 -a $PIPEERR -eq 0 ]; then
+  if [ $PIPEOUT -eq 1 ] && [ $PIPEERR -eq 0 ]; then
     exec 2>&1
     PIPEERR=1
   fi

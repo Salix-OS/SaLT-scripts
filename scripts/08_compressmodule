@@ -17,7 +17,7 @@ MODULE="$1"
   cd "$startdir"/src
   while read m; do
     m=$(echo "$m"|cut -d\| -f1-2|sed 's/|/-/')
-    if [ $m = $MODULE -o $MODULE = all ]; then
+    if [ $m = $MODULE ] || [ $MODULE = all ]; then
       echo3 "Creating module $m.salt..."
       if [ -e salt/overlay/${DISTRO}live/modules/$m.salt ]; then
         rm -f salt/overlay/${DISTRO}live/modules/$m.salt
