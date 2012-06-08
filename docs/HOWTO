@@ -28,7 +28,7 @@ II/ Minimum requirements
    - fuse, util-linux-ng
    - squashfs-tools
    - grub2
-   - syslinux
+   - perl
    - imagemagick
    - cdrtools
   Optional:
