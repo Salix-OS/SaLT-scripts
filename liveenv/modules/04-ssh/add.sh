@@ -11,7 +11,7 @@ modtxt="$HDIR"/MODIFICATIONS
 cat <<EOF >> "$modtxt"
 ssh
 ---
-- ssh keypairs already generated (RSA 2048bits)
+- ssh keypairs already generated (RSA1, RSA2, DSA, ECDSA)
 
 
 EOF
@@ -25,4 +25,7 @@ chmod go-r etc/ssh/*_key
 EOF
 
 mkdir -p "$RDIR"/etc/ssh
+ssh-keygen -q -t rsa1 -N '' -C 'root@localhost' -f "$RDIR"/etc/ssh/ssh_host_key
 ssh-keygen -q -t rsa -N '' -C 'root@localhost' -f "$RDIR"/etc/ssh/ssh_host_rsa_key
+ssh-keygen -q -t dsa -N '' -C 'root@localhost' -f "$RDIR"/etc/ssh/ssh_host_dsa_key
+ssh-keygen -q -t ecdsa -N '' -C 'root@localhost' -f "$RDIR"/etc/ssh/ssh_host_ecdsa_key
