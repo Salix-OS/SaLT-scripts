@@ -3,7 +3,7 @@
 # Used to download the correct version of SaLT.
 
 cd "$(dirname "$0")"
-SALT_VER='trunk'
+SALT_VER='tags/0.2.0'
 SALT_URL="https://salix.svn.sourceforge.net/svnroot/salix/salt/$SALT_VER"
 if [ -d salt ]; then
   rm -rf salt || echo "salt directory cannot be removed, check permissions" >&2
