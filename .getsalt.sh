@@ -4,7 +4,7 @@
 
 cd "$(dirname "$0")"
 SALT_VER='0.2.0'
-SALT_URL='git@github.com:jrd/SaLT.git'
+SALT_URL='git://github.com/jrd/SaLT.git'
 if [ -d salt ]; then
   rm -rf salt || echo "salt directory cannot be removed, check permissions" >&2
 fi
