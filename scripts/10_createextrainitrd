@@ -10,7 +10,6 @@ cd "$(dirname "$0")"
 . scripts/00_common
 echo3 "Creating extra initrd..."
 cd "$startdir"/src
-find salt/overlay -name '.svn' -type d -prune -exec rm -rf '{}' \;
 INITRDNAME="initextra-$VER${RLZ:+-$RLZ}.$COMP"
 echo $INITRDNAME
 ./salt/extra/create-initextra.sh $COMP $DEBUG

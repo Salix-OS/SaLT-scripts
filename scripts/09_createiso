@@ -10,7 +10,6 @@ cd "$(dirname "$0")"
 . scripts/00_common
 echo3 "Creating ISO..."
 cd "$startdir"/src
-find salt/overlay -name '.svn' -type d -prune -exec rm -rf '{}' \;
 CDNAME="${DISTRO}Live_${VER}"
 echo $CDNAME
 [ -n "$DEBUG" ] && DEBUG='-d 1' || DEBUG='-d 0'

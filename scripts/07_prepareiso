@@ -11,13 +11,10 @@ cd "$(dirname "$0")"
 echo3 "Creating the final structure..."
 cd "$startdir"/src
 cp -r "$startdir"/salt/ .
-mkdir -p salt/overlay/${DISTRO}live/modules salt/overlay/packages/std-kernel
-# add the standard kernel
-echo3 "Adding the standard kernel too"
-cp "$startdir"/std-kernel/kernel-* salt/overlay/packages/std-kernel/
+mkdir -p salt/overlay/${DISTRO}live/modules salt/overlay/${DISTRO}live/packages
 # add the packages lists
 echo3 "Adding packages lists"
-cp "$startdir"/packages-* salt/overlay/packages/
+cp "$startdir"/packages-* salt/overlay/${DISTRO}live/packages/
 # configure salt
 FILE=${DISTRO}-$VER${RLZ:+-$RLZ}.live
 CONTENT=$(/bin/echo -n "${FILE}" | md5sum | cut -d' ' -f1)

@@ -10,19 +10,14 @@ cd "$(dirname "$0")"
 . scripts/00_common
 . scripts/03_readmodules
 echo3 "Checking modules"
-kmodule=''
 lastmodule=''
-if [ -z "$kmodule" ]; then
+if [ -z "$lastmodule" ]; then
   while read m; do
     list="$(echo "$m"|cut -d\| -f3-)"
     m=$(echo "$m"|cut -d\| -f1-2|sed 's/|/-/')
     echo3 "Verifying packages for $m..."
     lastmodule=$m
     for p in $list; do
-      if [ $p = $KERNELPKGNAME ]; then
-        # module where the kernel live is
-        kmodule=$m
-      fi
       file="$(find -L "$startdir"/PKGS -name "$p-*"|grep "$p-[^-]\+-[^-]\+-[^-]\+.t[gblx]z"|head -n 1)"
       if [ ! -e "$file" ]; then
         quit "$p, referenced by module $m, is not available in $startdir/PKGS/"
@@ -31,5 +26,4 @@ if [ -z "$kmodule" ]; then
     done
   done < "$modules"
 fi
-export kmodule
 export lastmodule

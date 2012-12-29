@@ -10,21 +10,12 @@ cd "$(dirname "$0")"
 . scripts/00_common
 . scripts/03_readmodules
 . scripts/05_preparesources
-if [ -z "$kmodule" ]; then
-  kmodule=''
+if [ -z "$lastmodule" ]; then
   lastmodule=''
   while read m; do
-    list="$(echo "$m"|cut -d\| -f3-)"
     m=$(echo "$m"|cut -d\| -f1-2|sed 's/|/-/')
     lastmodule=$m
-    for p in $list; do
-      if [ $p = $KERNELPKGNAME ]; then
-        # module where the kernel live is
-        kmodule=$m
-      fi
-    done
   done < "$modules"
-  export kmodule
   export lastmodule
 fi
 
@@ -86,18 +77,6 @@ while read m; do
         sed -i 's/^id:.:initdefault:/id:4:initdefault:/' "$ROOT"/etc/inittab
       fi
     fi
-    if [ $kmodule = $m ]; then
-      (
-        cd "$ROOT"
-        mkdir -p usr/src/$KERNELPKGNAME usr/sbin
-        cp usr/src/linux-*/.config usr/src/linux-*/Module.symvers usr/src/$KERNELPKGNAME/
-        cat <<EOF > usr/sbin/init-live-kernel-compilation
-#!/bin/sh
-cp /usr/src/$KERNELPKGNAME/.config /usr/src/$KERNELPKGNAME/Module.symvers /usr/src/linux-2.*/
-EOF
-        chmod ug+x usr/sbin/init-live-kernel-compilation
-      )
-    fi
     # /var/log/setup
     if [ $lastmodule = $m ]; then
       (
@@ -128,10 +107,6 @@ EOF
       )
     fi
     umount "$ROOT"
-    if [ $lastmodule = $m ]; then
-      # delete the deletion of /dev/null
-      rm -rf $m/dev
-    fi
     # remove any fakely deleted files in RO branches, default suffix is _DELETED~
     find "$startdir/src/$m" -name '*_DELETED~' -prune -exec rm -rf '{}' \;
   else
