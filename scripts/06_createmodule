@@ -83,27 +83,28 @@ while read m; do
         cd "$ROOT"
         # /dev/null could be needed and will not be usable, so the trick is to delete it, and then delete the "deletion".
         rm ./dev/null
-        for s in 04.mkfontdir 05.fontconfig 07.update-desktop-database 07.update-mime-database 08.gtk-update-icon-cache htmlview services; do
-          if [ -x var/log/setup/setup.$s ]; then
-            echo "Running '/var/log/setup/setup.$s $ROOT'"
-            echo ""
-            ./var/log/setup/setup.$s "$ROOT"
+        if [ -e var/log/setup/setup.htmlview ]; then
+          grep -q midori var/log/setup/setup.htmlview || sed -i 's/seamonkey/\0 midori/' var/log/setup/setup.htmlview
+        fi
+        chmod a+r-x+X -R etc/gtk-2.0 etc/pango
+        for install_script in var/log/setup/setup.*; do
+          script=$(basename $install_script)
+          if [ -x var/log/setup/$script ]; then
+            echo "$script" | grep -q 'setup\.\(liloconfig\|mouse\|netconfig\|setconsolefont\|timeconfig\|xwmconfig\|70\.install-kernel\|80\.make-bootdisk\)' && continue
+            echo "Running '/var/log/setup/setup.$script $ROOT'"
+            ./var/log/setup/$script "$ROOT" 
           fi
         done
-        chmod a+r-x+X -R etc/gtk-2.0 etc/pango
-        echo "Running 'chroot . /usr/bin/update-gtk-immodules'"
-        chroot . /usr/bin/update-gtk-immodules
-        echo "Running 'chroot . /usr/bin/update-gdk-pixbuf-loaders'"
-        chroot . /usr/bin/update-gdk-pixbuf-loaders
-        echo "Running 'chroot . /usr/bin/update-pango-querymodules'"
-        chroot . /usr/bin/update-pango-querymodules
-        if find usr/share/icons 2> /dev/null | grep -q icon-theme.cache ; then
-          for theme_dir in usr/share/icons/* ; do
-            if [ -d "${theme_dir}"/icon-theme.cache ]; then
-              chroot . usr/bin/gtk-update-icon-cache -t -f "${theme_dir}" >/dev/null 2>&1
-            fi
-          done
-        fi
+        echo "Running 'chroot . /usr/sbin/clocksetup -c -z'"
+        chroot . /usr/sbin/clocksetup -c -z
+        echo "Running 'chroot . /usr/sbin/localesetup'"
+        chroot . /usr/sbin/localesetup
+        echo "Running 'chroot . /usr/sbin/update-all'"
+        chroot . /usr/sbin/update-all
+        sleep 10
+        rm ./dev/null
+        # add kernel live modules
+        tar xf "$startdir/PKGS/$KERNELPKGNAME"-*-*-*.txz lib/modules
       )
     fi
     umount "$ROOT"
