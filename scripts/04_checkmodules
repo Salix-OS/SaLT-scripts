@@ -27,3 +27,9 @@ if [ -z "$lastmodule" ]; then
   done < "$modules"
 fi
 export lastmodule
+echo3 "Verifying live kernel package $KERNELPKGNAME..."
+file="$(find -L "$startdir"/PKGS -name "$KERNELPKGNAME-*"|grep "$KERNELPKGNAME-[^-]\+-[^-]\+-[^-]\+.t[gblx]z"|head -n 1)"
+if [ ! -e "$file" ]; then
+  quit "$KERNELPKGNAME is not available in $startdir/PKGS/"
+  exit 1
+fi
