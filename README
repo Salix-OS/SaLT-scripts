@@ -111,7 +111,8 @@ III/ Create an ISO
       ┊   # empty for a final release for example
       ┊   #RLZ=
       ┊   # 
-      ┊   BGIMAGE_NAME=salix.xcf
+      ┊   #BGIMAGE_NAME=salix.xcf
+      ┊   THEME=Shine
       ┊   # don't change this unless you sure that the newer version works the same
       ┊   FUFSVER=0.4.2
       ┊   FUFSURL=http://funionfs.apiou.org/file/funionfs-$FUFSVER.tar.gz
@@ -125,7 +126,8 @@ III/ Create an ISO
       ┊   export DISTRO
       ┊   export VER
       ┊   export RLZ
-      ┊   export BGIMAGE_NAME
+      ┊   #export BGIMAGE_NAME
+      ┊   export THEME
       ┊   export FUFSVER
       ┊   export FUFSURL
       ┊   export ISO_NAME
