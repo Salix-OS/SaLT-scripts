@@ -16,4 +16,4 @@ nokde-desktop
 
 EOF
 
-rm -f "$RDIR"/root/home/one/Desktop/*-kde.desktop 2>/dev/null
+rm -f "$RDIR"/home/one/Desktop/*-kde.desktop 2>/dev/null
