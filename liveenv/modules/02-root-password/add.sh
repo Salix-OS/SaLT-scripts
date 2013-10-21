@@ -15,4 +15,10 @@ root-password
 
 
 EOF
-sed -i 's/^root:.*/root:$1$R5js9s.7$vv2tt94NF36FLz9xqHP2V.:14485:0:::::/' "$RDIR"/etc/shadow
+rootpwd=$(python -c "
+import crypt
+import string
+import random
+print crypt.crypt('live', '\$1\$'+''.join([random.choice(string.letters + string.digits + './') for c in range(8)])+'\$')
+")
+sed -i "/^root:/ s,^root::,root:$rootpwd:," "$RDIR"/etc/shadow

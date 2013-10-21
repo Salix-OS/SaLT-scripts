@@ -76,12 +76,10 @@ cat <<EOF > "$RDIR"/etc/gdm/custom.conf
 
 ### modified for Live ###
 [daemon]
-
 RemoteGreeter=/usr/libexec/gdmgreeter
-
 AutomaticLoginEnable=true
-
 AutomaticLogin=one
+GdmXserverTimeout=30
 ### /modified for Live ###
 
 [security]
