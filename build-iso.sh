@@ -11,17 +11,21 @@
 # See README
 
 cd $(dirname "$0")
-. scripts/00_common
-echo3 "Building $DISTRO live v.$VER"
-. scripts/01_getfunionfs
-. scripts/02_liveenv
-. scripts/03_readmodules
-. scripts/04_checkmodules
-[ -e src ] && rm -rf src
-. scripts/05_preparesources
-. scripts/06_createmodule
-. scripts/07_prepareiso
-. scripts/08_compressmodule
-rm -f $modules
-. scripts/09_createiso
-. scripts/10_createextrainitrd
+rm -f build-iso.log
+log() {
+  sed "s/^/[$(date '+%F %T')] /" | tee -a build-iso.log
+}
+. scripts/00_common 2>&1 | log
+echo3 "Building $DISTRO live v.$VER" 2>&1 | log
+. scripts/01_getfunionfs 2>&1 | log
+. scripts/02_liveenv 2>&1 | log
+. scripts/03_readmodules 2>&1 | log
+. scripts/04_checkmodules 2>&1 | log
+[ -e src ] && rm -rf src 2>&1 | log
+. scripts/05_preparesources 2>&1 | log
+. scripts/06_createmodule 2>&1 | log
+. scripts/07_prepareiso 2>&1 | log
+. scripts/08_compressmodule 2>&1 | log
+rm -f $modules 2>&1 | log
+. scripts/09_createiso 2>&1 | log
+. scripts/10_createextrainitrd 2>&1 | log
