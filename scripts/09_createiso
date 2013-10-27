@@ -13,12 +13,15 @@ cd "$startdir"/src
 CDNAME="${DISTRO}Live_${VER}"
 echo $CDNAME
 [ -n "$DEBUG" ] && DEBUG='-d 1' || DEBUG='-d 0'
-background=''
-if [ -z $THEME ] && [ -d "$startdir"/themes ]; then
-  background="-t \"$startdir\"/themes/$THEME"
+background_flag=''
+background_val=''
+if [ -n "$THEME" ] && [ -d "$startdir"/themes/$THEME ]; then
+  background_flag='-t'
+  background_val="$startdir"/themes/$THEME
 elif [ -z "$BGIMAGE_NAME" ]; then
-  background="-i \"$startdir/$BGIMAGE_NAME\""
+  background_flag='-i'
+  background_val="$startdir"/$BGIMAGE_NAME
 fi
-./salt/create-iso.sh $background -k "$startdir/PKGS/$KERNELPKGNAME"-*-*-*.txz $DEBUG -v "$CDNAME" -o "$startdir/$ISO_NAME"
+./salt/create-iso.sh $background_flag $background_val -k "$startdir/PKGS/$KERNELPKGNAME"-*-*-*.txz $DEBUG -v "$CDNAME" -o "$startdir/$ISO_NAME"
 cd "$startdir"
 md5sum "$ISO_NAME" > "$ISO_NAME.md5"

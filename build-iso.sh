@@ -11,21 +11,32 @@
 # See README
 
 cd $(dirname "$0")
-rm -f build-iso.log
-log() {
-  sed "s/^/[$(date '+%F %T')] /" | tee -a build-iso.log
-}
-. scripts/00_common 2>&1 | log
-echo3 "Building $DISTRO live v.$VER" 2>&1 | log
-. scripts/01_getfunionfs 2>&1 | log
-. scripts/02_liveenv 2>&1 | log
-. scripts/03_readmodules 2>&1 | log
-. scripts/04_checkmodules 2>&1 | log
-[ -e src ] && rm -rf src 2>&1 | log
-. scripts/05_preparesources 2>&1 | log
-. scripts/06_createmodule 2>&1 | log
-. scripts/07_prepareiso 2>&1 | log
-. scripts/08_compressmodule 2>&1 | log
-rm -f $modules 2>&1 | log
-. scripts/09_createiso 2>&1 | log
-. scripts/10_createextrainitrd 2>&1 | log
+if [ -z "$DO_LOG" ]; then
+  logfile="$PWD"/build-iso.log
+  logpipe=/tmp/$$.tmp
+  rm -f "$logfile"
+  log() {
+    while read line; do
+      echo "$line" | sed -r "s/\[H\[2J//g; s/\r([^\n])/\n\1/g;" | sed "s/^/[$(date '+%F %T')] /" >> "$logfile"
+    done
+  }
+  trap "rm -f $logpipe" TERM EXIT
+  mkfifo $logpipe
+  log <$logpipe &
+  DO_LOG=y script -q -c "$0 $@" -e -f $logpipe
+else
+  . scripts/00_common
+  echo3 "Building $DISTRO live v.$VER"
+  . scripts/01_getfunionfs
+  . scripts/02_liveenv
+  . scripts/03_readmodules
+  . scripts/04_checkmodules
+  [ -e src ] && rm -rf src
+  . scripts/05_preparesources
+  . scripts/06_createmodule
+  . scripts/07_prepareiso
+  . scripts/08_compressmodule
+  rm -f $modules
+  . scripts/09_createiso
+  . scripts/10_createextrainitrd
+fi
