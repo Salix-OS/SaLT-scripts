@@ -11,7 +11,7 @@ modtxt="$HDIR"/MODIFICATIONS
 cat <<EOF >> "$modtxt"
 xscreensaver-disable
 --------------------
-- disable the xscreensaver for user 'one' because it cause some problems with no-password account.
+- disable the xscreensaver for user 'one' because it cause some problems with some video cards.
 
 
 EOF
