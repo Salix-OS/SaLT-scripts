@@ -30,7 +30,19 @@ EOF
 
 echo 'one:x:1000:100::/home/one:/bin/bash' >> "$RDIR"/etc/passwd
 echo 'one::13686:0:99999:7:::' >> "$RDIR"/etc/shadow
-sed -i 's/^floppy:.*/\0one/; s/^audio:.*/\0one/; s/^video:.*/\0one/; s/^cdrom:.*/\0one/; s/^plugdev:.*/\0one/; s/^power:.*/\0one/; s/^netdev:.*/\0one/; s/^scanner:.*/\0one/; s/^users:.*/\0one/; s/^fuse:.*/\0one/; s/^wheel:.*/\0,one/;' "$RDIR"/etc/group
+sed -i -r '
+s/^(floppy:).*/\1one/;
+s/^(audio:).*/\1one/;
+s/^(video:).*/\1one/;
+s/^(cdrom:).*/\1one/;
+s/^(plugdev:).*/\1one/;
+s/^(power:).*/\1one/;
+s/^(netdev:).*/\1one/;
+s/^(scanner:).*/\1one/;
+s/^(users:).*/\1one/;
+s/^(fuse:).*/\1one/;
+s/^wheel:.*/\0,one/;
+' "$RDIR"/etc/group
 mkdir -p "$RDIR"/home/one
 cp -r "$RDIR"/etc/skel/* "$RDIR"/etc/skel/.??* "$RDIR"/home/one/ 2>/dev/null
 
