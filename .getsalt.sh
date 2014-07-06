@@ -1,8 +1,9 @@
 #!/bin/sh
+# vim: set syn=sh ft=sh et sw=2 sts=2 ts=2 tw=0:
 #
 # Used to download the correct version of SaLT.
 
-cd "$(dirname "$0")"
+cd $(dirname "$0")
 SALT_VER='master'
 SALT_URL='git://github.com/jrd/SaLT.git'
 if [ -d salt ]; then
