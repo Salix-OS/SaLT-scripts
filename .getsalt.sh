@@ -1,4 +1,5 @@
 #!/bin/sh
+# vim: set syn=sh ft=sh et sw=2 sts=2 ts=2 tw=0:
 #
 # Used to download the correct version of SaLT.
 
