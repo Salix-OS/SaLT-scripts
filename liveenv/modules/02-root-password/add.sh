@@ -15,4 +15,4 @@ root-password
 
 
 EOF
-sed -i 's/^root:.*/root:$1$R5js9s.7$vv2tt94NF36FLz9xqHP2V.:14485:0:::::/' "$RDIR"/etc/shadow
+sed -i 's/^root:.*/root:!$1$R5js9s.7$vv2tt94NF36FLz9xqHP2V.:14485:0:::::/' "$RDIR"/etc/shadow
