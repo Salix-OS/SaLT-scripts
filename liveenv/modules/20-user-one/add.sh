@@ -29,7 +29,7 @@ user-one
 EOF
 
 echo 'one:x:1000:100::/home/one:/bin/bash' >> "$RDIR"/etc/passwd
-echo 'one::13686:0:99999:7:::' >> "$RDIR"/etc/shadow
+echo 'one:$5$wC3Ap/4t7$o/lDUbBMF5RT7DFaHYW2g0NO.ArrvHd7G2m1mdHhXR7:13686:0:99999:7:::' >> "$RDIR"/etc/shadow
 sed -i -r '
 s/^(floppy:).*/\1one/;
 s/^(audio:).*/\1one/;
